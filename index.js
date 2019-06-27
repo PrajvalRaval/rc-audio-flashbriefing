@@ -2,7 +2,6 @@ const express = require("express");
 const axios = require('axios');
 const app = express();
 var cache = require('memory-cache');
-
 require('dotenv').config()
 app.use(express.json());
 
@@ -39,6 +38,8 @@ const login = async (userName, passWord) =>
   .catch((err) => {
     console.log(err);
   });
+
+// Get File Type
 
 const getFileType = async () =>
   await axios
@@ -109,7 +110,7 @@ app.get('/', async (req, res) => {
       var headers = await login(userName, passWord);
       var downloadURL = await getLastMessageFileURL(channelName, headers);
       var S3Url = await getLastMessageFileDowloadURL(downloadURL, headers);
-
+    
       return axios.get(`${ serverurl }/api/v1/channels.anonymousread?roomName=${ channelName }`)
         .then(response => {
 
@@ -148,7 +149,7 @@ app.get('/', async (req, res) => {
           });
 
           console.log('Storing Data In Memory.')
-          cache.put('message', responseJSON, cacheTimeout);
+          cache.put('message', responseJSON, 300000);
 
           const result = JSON.parse(responseJSON);
           return res.status(200).json(result);
