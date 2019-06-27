@@ -24,7 +24,7 @@ const passWord = process.env.PASSWORD;
 
 //Data Frequency Timing in ms & Title Text
 
-const cacheTimeout = 120000; //300000ms = 5mins
+const cacheTimeout = 300000; //300000ms = 5mins
 const flashBriefingTitle = 'Rocket Chat Flash Briefing';
 
 //Login
@@ -69,7 +69,7 @@ const getLastMessageFileURL = async (channelName, headers) =>
   .then((res) => res.data)
   .then((res) => `https://bots.rocket.chat/file-upload/${ res.messages[0].file._id }/${res.messages[0].file.name}`)
   .catch((err) => {
-      console.log(err.message);
+    console.log(err.message);
   });
 
 //Get S3 URL
@@ -86,10 +86,10 @@ const getLastMessageFileDowloadURL = async (downloadURL, headers) =>
 
 //Download And Save To Local Storage
 async function downloadAudio(S3Url) {
-  
+
   download(S3Url).then(data => {
     fs.writeFileSync('audioFolder/audioFile.mp3', data);
-});
+  });
 
 }
 
@@ -129,7 +129,7 @@ app.get('/', async (req, res) => {
       var downloadURL = await getLastMessageFileURL(channelName, headers);
       var S3Url = await getLastMessageFileDowloadURL(downloadURL, headers);
       await downloadAudio(S3Url);
-    
+
       return axios.get(`${ serverurl }/api/v1/channels.anonymousread?roomName=${ channelName }`)
         .then(response => {
 
