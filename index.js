@@ -2,7 +2,10 @@ const express = require("express");
 const axios = require('axios');
 const app = express();
 var cache = require('memory-cache');
-require('dotenv').config()
+require('dotenv').config();
+const fs = require('fs');
+const download = require('download');
+
 
 app.use(express.json());
 
@@ -21,7 +24,7 @@ const passWord = process.env.PASSWORD;
 
 //Data Frequency Timing in ms & Title Text
 
-const cacheTimeout = 120000; //300000ms = 5mins
+const cacheTimeout = 300000; //300000ms = 5mins
 const flashBriefingTitle = 'Rocket Chat Flash Briefing';
 
 //Login
@@ -66,7 +69,7 @@ const getLastMessageFileURL = async (channelName, headers) =>
   .then((res) => res.data)
   .then((res) => `https://bots.rocket.chat/file-upload/${ res.messages[0].file._id }/${res.messages[0].file.name}`)
   .catch((err) => {
-      console.log(err.message);
+    console.log(err.message);
   });
 
 //Get S3 URL
@@ -80,6 +83,15 @@ const getLastMessageFileDowloadURL = async (downloadURL, headers) =>
   .catch((err) => {
     console.log(err.message);
   });
+
+//Download And Save To Local Storage
+async function downloadAudio(S3Url) {
+
+  download(S3Url).then(data => {
+    fs.writeFileSync('audioFolder/audioFile.mp3', data);
+  });
+
+}
 
 //PING ROUTE
 
@@ -116,7 +128,8 @@ app.get('/', async (req, res) => {
       var headers = await login(userName, passWord);
       var downloadURL = await getLastMessageFileURL(channelName, headers);
       var S3Url = await getLastMessageFileDowloadURL(downloadURL, headers);
-    
+      await downloadAudio(S3Url);
+
       return axios.get(`${ serverurl }/api/v1/channels.anonymousread?roomName=${ channelName }`)
         .then(response => {
 
@@ -125,7 +138,7 @@ app.get('/', async (req, res) => {
             updateDate: response.data.messages[0].ts,
             titleText: flashBriefingTitle,
             mainText: response.data.messages[0].msg,
-            streamUrl: __dirname + '/dist/foo.mp3',
+            streamUrl: `https://${req.headers.host}/download`,
             redirectionUrl: `${ serverurl }/channel/${ channelName }`
           });
 
@@ -151,12 +164,11 @@ app.get('/', async (req, res) => {
             updateDate: response.data.messages[0].ts,
             titleText: flashBriefingTitle,
             mainText: response.data.messages[0].msg,
-            streamUrl: __dirname + '/dist/foo.mp3',
             redirectionUrl: `${ serverurl }/channel/${ channelName }`
           });
 
           console.log('Storing Data In Memory.')
-          cache.put('message', responseJSON, 300000);
+          cache.put('message', responseJSON, cacheTimeout);
 
           const result = JSON.parse(responseJSON);
           return res.status(200).json(result);
@@ -173,7 +185,7 @@ app.get('/', async (req, res) => {
 });
 
 app.get('/download', (req, res) => {
-  const file = __dirname + '/dist/foo.mp3';
+  const file = __dirname + '/audioFolder/audioFile.mp3';
   res.download(file);
 });
 
