@@ -125,7 +125,7 @@ app.get('/', async (req, res) => {
             updateDate: response.data.messages[0].ts,
             titleText: flashBriefingTitle,
             mainText: response.data.messages[0].msg,
-            streamUrl: `https://rc-fb-usa.herokuapp.com/download`,
+            streamUrl: `req.protocol+"://"+req.headers.host+"/download"`,
             redirectionUrl: `${ serverurl }/channel/${ channelName }`
           });
 
