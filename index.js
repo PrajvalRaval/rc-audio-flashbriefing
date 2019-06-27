@@ -2,17 +2,12 @@ const express = require("express");
 const axios = require('axios');
 const app = express();
 var cache = require('memory-cache');
-require('dotenv').config();
 const fs = require('fs');
 const download = require('download');
-
+require('dotenv').config();
 
 app.use(express.json());
-
-
 app.use(express.static('dist'))
-
-
 
 // Environment Variables
 
