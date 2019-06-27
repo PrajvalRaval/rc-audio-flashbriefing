@@ -2,7 +2,10 @@ const express = require("express");
 const axios = require('axios');
 const app = express();
 var cache = require('memory-cache');
-require('dotenv').config()
+require('dotenv').config();
+const fs = require('fs');
+const download = require('download');
+
 
 app.use(express.json());
 
@@ -81,6 +84,15 @@ const getLastMessageFileDowloadURL = async (downloadURL, headers) =>
     console.log(err.message);
   });
 
+//Download And Save To Local Storage
+async function downloadAudio(S3Url) {
+  
+  download(S3Url).then(data => {
+    fs.writeFileSync('audioFolder/audioFile.mp3', data);
+});
+
+}
+
 //PING ROUTE
 
 app.get('/ping', (req, res) => {
@@ -116,6 +128,7 @@ app.get('/', async (req, res) => {
       var headers = await login(userName, passWord);
       var downloadURL = await getLastMessageFileURL(channelName, headers);
       var S3Url = await getLastMessageFileDowloadURL(downloadURL, headers);
+      await downloadAudio(S3Url);
     
       return axios.get(`${ serverurl }/api/v1/channels.anonymousread?roomName=${ channelName }`)
         .then(response => {
@@ -155,7 +168,7 @@ app.get('/', async (req, res) => {
           });
 
           console.log('Storing Data In Memory.')
-          cache.put('message', responseJSON, 300000);
+          cache.put('message', responseJSON, cacheTimeout);
 
           const result = JSON.parse(responseJSON);
           return res.status(200).json(result);
@@ -172,7 +185,7 @@ app.get('/', async (req, res) => {
 });
 
 app.get('/download', (req, res) => {
-  const file = __dirname + '/dist/foo.mp3';
+  const file = __dirname + '/audioFolder/audioFile.mp3';
   res.download(file);
 });
 
