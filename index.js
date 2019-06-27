@@ -52,7 +52,7 @@ app.get('/', (req,res) => {
           updateDate: response.data.messages[0].ts,
           titleText: flashBriefingTitle,
           mainText: response.data.messages[0].msg,
-          streamUrl: "https://apltestbucket.s3.amazonaws.com/ssml/Intro/Intro.mp3",
+          streamUrl: "https://s3.amazonaws.com/uploads.use1.cloud.rocket.chat/KqCQiHfeFaKdSEGvy/uploads/XLRg3gpC7uZBaHp5u/FpaaN9jwwJT9tsw2a/ep4npMnAkFuMgABbe?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAILPK6SHTK5RJZLHQ%2F20190627%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20190627T090125Z&X-Amz-Expires=120&X-Amz-Signature=28683b1b15e66bd1d6ad33f5180b02ef6c4e9223d6e3e330b0e3ce4862a721b4&X-Amz-SignedHeaders=host",
           redirectionUrl: `${ serverurl }/channel/${ channelName }`
         });
 
