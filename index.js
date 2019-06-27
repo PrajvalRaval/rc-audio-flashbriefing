@@ -3,7 +3,13 @@ const axios = require('axios');
 const app = express();
 var cache = require('memory-cache');
 require('dotenv').config()
+
 app.use(express.json());
+
+
+app.use(express.static('dist'))
+
+
 
 // Environment Variables
 
@@ -119,7 +125,7 @@ app.get('/', async (req, res) => {
             updateDate: response.data.messages[0].ts,
             titleText: flashBriefingTitle,
             mainText: response.data.messages[0].msg,
-            streamUrl: S3Url,
+            streamUrl: __dirname + '/dist/foo.mp3',
             redirectionUrl: `${ serverurl }/channel/${ channelName }`
           });
 
@@ -145,6 +151,7 @@ app.get('/', async (req, res) => {
             updateDate: response.data.messages[0].ts,
             titleText: flashBriefingTitle,
             mainText: response.data.messages[0].msg,
+            streamUrl: __dirname + '/dist/foo.mp3',
             redirectionUrl: `${ serverurl }/channel/${ channelName }`
           });
 
@@ -163,6 +170,11 @@ app.get('/', async (req, res) => {
 
 
   }
+});
+
+app.get('/download', (req, res) => {
+  const file = __dirname + '/dist/foo.mp3';
+  res.download(file);
 });
 
 app.listen(PORT, '0.0.0.0', function () {
