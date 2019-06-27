@@ -43,6 +43,10 @@ Deploy your Flash briefing skill in minutes using Rocket chat and broadcast mess
   * **CHANNEL_NAME** : Enter the name of the broadcasting channel we created earlier. Make sure its in lower case with no spaces.
 
   * **SERVER_URL** : Enter your current Rocket.Chat server url here. Ex- https://your.sever.chat
+  
+  * **USER_NAME** : Enter your Rocket.Chat username.
+  
+  * **PASSWORD** : Enter your Rocket.chat password.
 
 * Change **cacheTimeout** & **flashBriefingTitle** from **index.js** as per your requirement.
 
