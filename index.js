@@ -52,6 +52,7 @@ app.get('/', (req,res) => {
           updateDate: response.data.messages[0].ts,
           titleText: flashBriefingTitle,
           mainText: response.data.messages[0].msg,
+          streamUrl: "https://apltestbucket.s3.amazonaws.com/ssml/Intro/Intro.mp3",
           redirectionUrl: `${ serverurl }/channel/${ channelName }`
         });
 
